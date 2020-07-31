@@ -1,0 +1,36 @@
+- name: install nfs
+  become: true
+  hosts: all
+  tasks:
+    - name: common tasks
+      apt:
+        name:
+          - nfs-kernel-server
+          - nfs-common
+          - portmap
+        state: present
+        update_cache: true
+      notify: reload nfs
+
+    - name: create nfsdir
+      file:
+        path: /var/nfs/share
+        state: directory
+        mode: 0777
+      notify: reload nfs
+
+    - name: configure nfs
+      copy:
+        content: |
+          /var/nfs/share  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+        dest: /etc/exports
+      notify: reload nfs
+
+    - name: debug
+      shell: exportfs -rv && showmount -e
+
+  handlers:
+    - name: reload nfs
+      systemd:
+        name: nfs-server
+        state: restarted
