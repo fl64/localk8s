@@ -23,6 +23,8 @@
       import_tasks: k8s/nfs-storage.yml
     - name: deploy nginx ingress controller
       import_tasks: k8s/nginx-ingress.yml
+    - name: install helm3
+      import_tasks: k8s/helm3.yml
 
 - name: configure worker node
   become: true
