@@ -4,7 +4,7 @@
   become: true
   hosts: all
   vars:
-    k8s_ver: 1.18.0-00
+    k8s_ver: 1.19.0-00
   tasks:
     - name: common tasks
       import_tasks: k8s/common.yml
