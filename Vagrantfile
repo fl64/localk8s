@@ -7,13 +7,14 @@ vms = {
   "nfs"    =>  { :ip => "10.0.0.5",  :ram => 512,  :playbook => "playbooks/nfs.yml" },
   "master" =>  { :ip => "10.0.0.10", :ram => 1536, :playbook => "playbooks/k8s.yml" },
   "node01" =>  { :ip => "10.0.0.20", :ram => 1536, :playbook => "playbooks/k8s.yml" },
-  "node02" =>  { :ip => "10.0.0.21", :ram => 1536, :playbook => "playbooks/k8s.yml" },
-  "node03" =>  { :ip => "10.0.0.22", :ram => 1536, :playbook => "playbooks/k8s.yml" }
+#  "node02" =>  { :ip => "10.0.0.21", :ram => 1536, :playbook => "playbooks/k8s.yml" },
+#  "node03" =>  { :ip => "10.0.0.22", :ram => 1536, :playbook => "playbooks/k8s.yml" }
 
 }
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
+  config.dns.tld =  "local"
   vms.each_with_index do |(name, conf), index|
     config.vm.define name do |machine|
 
