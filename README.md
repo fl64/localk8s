@@ -2,7 +2,7 @@ My local CNCF CKA preparation lab
 =================================
 k8s cluster (1 master + 3 nodes ) with LB(metallb) and PersistentStorage(NFS)
 
-![](https://i.imgur.com/vlvELy2.png)
+![](https://github.com/fl64/localk8s/blob/slurm_cicd/scheme/localk8s.png)
 
 ## Requirements:
 - virtualbox (tested on 6.1.12)
