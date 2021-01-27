@@ -1,0 +1,104 @@
+---
+- name: install docker
+  apt:
+    name:
+      - docker.io
+      - nfs-client
+    state: present
+    update_cache: true
+
+- name: create docker config
+  copy:
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "storage-driver": "overlay2"
+      }
+    dest: /etc/docker/daemon.json
+
+- name: enable docker
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: Add an k8s apt key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add k8s repo
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    filename: kubernetes
+
+- name: install k8s components
+  apt:
+    name:
+      - "kubeadm={{ k8s_ver }}"
+      - "kubelet={{ k8s_ver }}"
+      - "kubectl={{ k8s_ver }}"
+      - "kubernetes-cni=0.8.7-00"
+    state: present
+
+- name: create .vimrc
+  copy:
+    content: |
+      colorscheme ron
+      set number
+      set et
+      set sw=2 ts=2 sts=2
+    dest: "{{ item }}/.vimrc"
+  with_items:
+    - /root
+    - /home/vagrant
+
+- name: create .vimrc
+  copy:
+    content: |
+      colorscheme ron
+      set number
+      set et
+      set sw=2 ts=2 sts=2
+    dest: "{{ item }}/.vimrc"
+  with_items:
+    - /root
+    - /home/vagrant
+
+- name: bash config
+  blockinfile:
+    path: "{{ item }}/.bashrc"
+    block: |
+      source <(kubectl completion bash)
+      source <(kubeadm completion bash)
+      alias k=kubectl
+      complete -F __start_kubectl k
+      export do="--dry-run=client -oyaml"
+      export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+  with_items:
+    - /root
+    - /home/vagrant
+
+- name: install krew
+  unarchive:
+    src: https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.tar.gz
+    dest: /tmp
+    extra_opts:
+      - --strip=1
+      - --wildcards
+      - "*/krew-linux_amd64"
+    remote_src: True
+  tags:
+    - krew
+
+- name: rename krew
+  copy:
+    remote_src: True
+    src: /tmp/krew-linux_amd64
+    dest: /usr/local/bin/krew
+    mode: 0755
+  tags:
+    - krew

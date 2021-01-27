@@ -1,0 +1,21 @@
+---
+### Common tasks
+- name: install common packets on vms
+  become: true
+  hosts: all
+  vars:
+    k8s_ver: 1.19.0-00
+  tasks:
+    - name: common tasks
+      import_tasks: k8s_common.yml
+
+- name: configure worker node
+  become: true
+  gather_facts: false
+  hosts: all
+  tasks:
+    - name: set join command
+      shell: "sh /conf.tmp/join_cluster.sh &2>1 >> worker_register.log"
+      args:
+        chdir: $HOME
+        creates: worker_register.log

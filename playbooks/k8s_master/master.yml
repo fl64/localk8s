@@ -1,0 +1,36 @@
+---
+- name: initialize the cluster
+  shell: kubeadm init --apiserver-advertise-address 10.0.0.10 --pod-network-cidr=10.244.0.0/16 | tee kubeadm_init.log
+  args:
+    chdir: $HOME
+    creates: kubeadm_init.log
+
+- name: create .kube directory
+  become: yes
+  become_user: vagrant
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    remote_src: yes
+    owner: vagrant
+
+- name: install weave net
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: |
+    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" | tee weave_cni.log
+  args:
+    chdir: $HOME
+    creates: weave_cni.log
+
+- name: create join command
+  shell: kubeadm token create --print-join-command > /conf.tmp/join_cluster.sh
+  args:
+    chdir: /conf.tmp
+    creates: join_cluster.sh

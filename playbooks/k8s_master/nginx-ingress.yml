@@ -1,0 +1,13 @@
+---
+# https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
+- name: configure nginx ingress controller
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: |
+    kubectl create ns nginx
+    helm repo add nginx-stable https://helm.nginx.com/stable
+    helm repo update
+    helm install k8slocal-ingress nginx-stable/nginx-ingress --namespace nginx --set controller.publishService.enabled=true > helm_nginx_ingress.log
+  args:
+    chdir: $HOME
+    creates: helm_nginx_ingress.log

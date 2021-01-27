@@ -1,0 +1,32 @@
+---
+- name: install metallb
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.5/manifests/namespace.yaml && \
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.5/manifests/metallb.yaml && \
+    kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" > metallb_result.log
+  args:
+    chdir: $HOME
+    creates: metallb_result.log
+- name: configure metallb
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: |
+    cat <<EOF | kubectl apply -f -
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          namespace: metallb-system
+          name: config
+        data:
+          config: |
+            address-pools:
+            - name: default
+              protocol: layer2
+              addresses:
+              - 10.0.0.150-10.0.0.200
+    EOF > metallb_pool_result.log
+  args:
+    chdir: $HOME
+    creates: metallb_pool_result.log

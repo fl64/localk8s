@@ -1,3 +1,4 @@
+---
 - name: configure nfs storafe
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf

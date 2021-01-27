@@ -1,8 +1,0 @@
-- name: configure nginx ingress controller
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  shell: |
-    kubectl apply -f /deploy/03_nginx_ingress/ > nginx_ingress.log
-  args:
-    chdir: $HOME
-    creates: nginx_ingress.log
