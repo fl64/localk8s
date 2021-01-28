@@ -6,9 +6,11 @@ k8s cluster (1 master + 3 nodes ) with LB(metallb) and PersistentStorage(NFS)
 
 ## Requirements:
 - virtualbox (tested on 6.1.12)
-- vagrant (tested on 2.2.9)
+- vagrant (tested on 2.2.14)
 
 ## Prep:
+(Already embedded in VM OS)
+
 Add some completions:
 ```bash
 cat <<EOF >> ~/.bashrc

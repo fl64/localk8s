@@ -18,24 +18,24 @@ spec:
         app: fl64-app
     spec:
       containers:
-      - image: fl64/nginx_test:0.1.1
-        name: nginx-test
-        env:
-        - name: T1_PORT
-          value:  "8888"
-        - name: T1_BC
-          value:  red
-        - name: T1_MSG
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        resources: {}
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 18181
-          initialDelaySeconds: 90
-          timeoutSeconds: 10
+        - image: fl64/nginx_test:0.1.1
+          name: nginx-test
+          env:
+            - name: T1_PORT
+              value: "8888"
+            - name: T1_BC
+              value: white
+            - name: T1_MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources: {}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 18181
+            initialDelaySeconds: 90
+            timeoutSeconds: 10
 status: {}
 ---
 apiVersion: v1
@@ -45,8 +45,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: 8888
+    - port: 80
+      targetPort: 8888
   selector:
     app: fl64-app
 ---
@@ -59,13 +59,13 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - host: 10.0.0.150.xip.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: fl64-app-svc
-            port:
-              number: 80
+    - host: 10.0.0.150.xip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fl64-app-svc
+                port:
+                  number: 80

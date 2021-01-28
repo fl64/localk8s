@@ -56,18 +56,6 @@
     - /root
     - /home/vagrant
 
-- name: create .vimrc
-  copy:
-    content: |
-      colorscheme ron
-      set number
-      set et
-      set sw=2 ts=2 sts=2
-    dest: "{{ item }}/.vimrc"
-  with_items:
-    - /root
-    - /home/vagrant
-
 - name: bash config
   blockinfile:
     path: "{{ item }}/.bashrc"
