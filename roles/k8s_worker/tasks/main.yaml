@@ -1,0 +1,18 @@
+---
+
+- name: create temp file with mainfests
+  file:
+    dest: "{{ k8s_worker_temp_dir }}"
+    state: directory
+
+- name: generate kubeadm join conf
+  template:
+    src: kubeadm-join-config.yaml.j2
+    dest: "{{ k8s_worker_temp_dir }}/kubeadm-join-config.yaml"
+
+- name: join cluster
+  shell:
+    kubeadm join --config kubeadm-join-config.yaml | tee kubeadm-join-config.log
+  args:
+    chdir: "{{ k8s_worker_temp_dir }}"
+    creates: "kubeadm-join-config.log"

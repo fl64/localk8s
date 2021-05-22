@@ -1,12 +1,36 @@
 My local CNCF CKA preparation lab
 =================================
-k8s cluster (1 master + 3 nodes ) with LB(metallb) and PersistentStorage(NFS)
-
-![](https://github.com/fl64/localk8s/blob/slurm_cicd/scheme/localk8s.png)
+k8s cluster (1 master + X nodes )
 
 ## Requirements:
 - virtualbox (tested on 6.1.12)
 - vagrant (tested on 2.2.14)
+
+## Current setup
+
+- k8s
+- ArgoCD + ArgoCD applicationset
+- Metallb
+- Nginx ingress
+
+
+## How to
+
+``` bash
+# up VMs and run ansible playbook
+vagrant up
+
+# run playbooks with git tag
+K8S_TAGS=common vagrant up
+
+# ssh to VMs
+vagrant ssh master
+vagrant ssh node100
+etc...
+
+# clean up
+vagrant down
+```
 
 ## Prep:
 (Already embedded in VM OS)
@@ -31,11 +55,6 @@ set et
 set sw=2 ts=2 sts=2
 EOF
 ```
-
-## How to access VMs:
-1. `vagrant ssh <vmname>`
-2. `ssh vagranr@<vmname>`
-
 ## Enable metrics service
 
 https://github.com/kubernetes-sigs/metrics-server

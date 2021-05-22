@@ -2,3 +2,4 @@
 *.log
 tests/*/
 tmp/
+kubeconfig

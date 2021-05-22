@@ -1,0 +1,50 @@
+- name: Add an helm apt key
+  apt_key:
+    url: https://baltocdn.com/helm/signing.asc
+    state: present
+
+- name: Add helm repo
+  apt_repository:
+    repo: deb https://baltocdn.com/helm/stable/debian/ all main
+    state: present
+    filename: helm
+
+- name: install helm packages
+  apt:
+    name:
+      - helm
+    state: present
+    update_cache: true
+
+
+- name: wait for kube API up
+  uri:
+    url: "https://{{ helm_kubeapi_ip_addr }}:6443"
+    status_code:
+    - "403"
+    validate_certs: false
+  register: result
+  until: result.status == 403
+  retries: 30
+  delay: 2
+
+- name: Add argocd chart repo
+  community.kubernetes.helm_repository:
+    name: "{{ item.repo.name }}"
+    repo_url: "{{ item.repo.repo_url }}"
+  with_items: "{{ helm_charts }}"
+
+- debug: msg="{{ item.chart.chart_values }}"
+  with_items: "{{ helm_charts }}"
+
+- name: Deploy helm chart
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  community.kubernetes.helm:
+    name: "{{ item.name }}"
+    chart_version: "{{ item.chart.chart_version }}"
+    chart_ref: "{{ item.chart.chart_ref }}"
+    release_namespace: "{{ item.chart.release_namespace }}"
+    create_namespace: true
+    values: "{{ item.chart.chart_values }}"
+  with_items: "{{ helm_charts }}"

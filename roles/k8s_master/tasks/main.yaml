@@ -1,0 +1,76 @@
+---
+
+- name: create temp file with mainfests
+  file:
+    dest: "{{ k8s_master_temp_dir }}"
+    state: directory
+
+- name: generate kubeadm init conf
+  template:
+    src: kubeadm-init-config.yaml.j2
+    dest: "{{ k8s_master_temp_dir }}/kubeadm-init-config.yaml"
+
+- name: init cluster
+  shell:
+    kubeadm init --config kubeadm-init-config.yaml | tee kubeadm-init-config.log
+  args:
+    chdir: "{{ k8s_master_temp_dir }}"
+    creates: "kubeadm-init.log"
+
+- name: create .kube directory
+  become: yes
+  become_user: vagrant
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    remote_src: yes
+    owner: vagrant
+
+# - name: create temp file with mainfests
+#   file:
+#     dest: "{{ k8s_master_temp_dir }}/cilium"
+#     state: directory
+
+# - name: copy cilium mainfests
+#   copy:
+#     src: "{{ item }}"
+#     dest: "{{ k8s_master_temp_dir }}/cilium/"
+#   with_fileglob:
+#     - cilium/*.yaml
+
+# - name: install cilium
+#   environment:
+#     KUBECONFIG: /etc/kubernetes/admin.conf
+#   shell: |
+#     kubectl create -k . | tee cilium.log
+#   args:
+#     chdir: "{{ k8s_master_temp_dir }}/cilium/"
+#     creates: cilium.log
+
+- name: install Calico
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: |
+    kubectl create -f https://docs.projectcalico.org/manifests/calico.yaml | tee calico.log
+  args:
+    chdir: "{{ k8s_master_temp_dir }}/"
+    creates: calico.log
+
+- name: Find out kubeconf
+  ansible.builtin.slurp:
+    src: /etc/kubernetes/admin.conf
+  register: kubeconf
+
+- name: Print kubeconf
+  ansible.builtin.debug:
+    msg: "{{ kubeconf['content'] | b64decode }}"
+
+- name: Save kubeconf localy
+  become: false
+  local_action: copy content={{ kubeconf['content'] | b64decode }} dest=../kubeconfig

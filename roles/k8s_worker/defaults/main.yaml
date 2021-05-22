@@ -1,0 +1,3 @@
+k8s_worker_bootstrap_token: testbootstraptoken
+k8s_worker_master_fqdn: "master-.{{ k8s_worker_master_ip_addr }}.nip.io"
+k8s_worker_temp_dir: /build

@@ -3,29 +3,115 @@
 - name: install common packets on vms
   become: true
   hosts: all
-  vars:
-    k8s_ver: 1.19.0-00
-  tasks:
-    - name: common tasks
-      import_tasks: k8s_common.yml
+  roles:
+    - role: k8s_common
+      vars:
+        k8s_common_ver: "{{ _k8s_version }}"
+      tags:
+      - common
+    - role: k8s_master
+      vars:
+        k8s_master_ver: "{{ _k8s_version }}"
+        k8s_master_bootstrap_token: "{{ _k8s_bootstrap_token }}"
+        k8s_master_master_ip_addr: "{{ _k8s_master_node_ip }}"
+        k8s_master_master_ext_fqdn: "master-ext.{{ k8s_master_master_ip_addr }}.nip.io"
+        k8s_master_master_int_fqdn: "master.{{ k8s_master_master_ip_addr }}.nip.io"
+        k8s_master_cluster_name: test-cluster
+      tags:
+      - master
+    - role: helm
+      vars:
+        helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
+        helm_charts:
+        # ArgoCD
+        - name: argocd
+          repo:
+            name: argo
+            repo_url: "https://argoproj.github.io/argo-helm"
+          chart:
+            chart_version: 3.6.4
+            chart_ref: argo/argo-cd
+            release_namespace: argocd
+            chart_values:
+                server:
+                  ingress:
+                    hosts:
+                    - argocd
+                    enabled: true
+                    annotations:
+                      kubernetes.io/ingress.class: nginx
+                    paths:
+                    - /
+                  config:
+                    repositories: |
+                      - url: https://github.com/fl64/argocd-applicatioin-set
+                configs:
+                  secret:
+                    argocdServerAdminPassword: $2y$12$PAlSlC1uHzwDUSoPZWN.9.sTi/zDWXf3XrigGWBhJl5PMHlNsy8i.
+        # ArgoCD application set
+        - name: argocd-applicationset
+          repo:
+            name: argo
+            repo_url: "https://argoproj.github.io/argo-helm"
+          chart:
+            chart_version: 0.1.5
+            chart_ref: argo/argocd-applicationset
+            release_namespace: argocd
+            chart_values:
+                installCRDs: false
+        # Metallb
+        - name: metallb
+          repo:
+            name: bitnami
+            repo_url: "https://charts.bitnami.com/bitnami"
+          chart:
+            chart_version: 2.4.0
+            chart_ref: bitnami/metallb
+            release_namespace: metallb
+            chart_values:
+              configInline:
+                address-pools:
+                - name: generic-cluster-pool
+                  protocol: layer2
+                  addresses:
+                  - 192.168.111.200-192.168.111.220
+        # metrics-server
+        - name: metrics-server
+          repo:
+            name: bitnami
+            repo_url: "https://charts.bitnami.com/bitnami"
+          chart:
+            chart_version: 5.8.9
+            chart_ref: bitnami/metrics-server
+            release_namespace: kube-system
+            chart_values:
+              rbac:
+                create: true
+              extraArgs:
+                kubelet-insecure-tls:
+                kubelet-preferred-address-types: InternalIP
+                v: 4
+        # Nginx ingress
+        - name: nginx-ingress
+          repo:
+            name: nginx-stable
+            repo_url: "https://helm.nginx.com/stable"
+          chart:
+            chart_version: 0.9.3
+            chart_ref: nginx-stable/nginx-ingress
+            release_namespace: nginx-ingress
+            chart_values: {}
+        # Nginx ingress
+        # - name: nfs-client-provisioner
+        #   repo:
+        #     name: ckotzbauer
+        #     repo_url: "https://ckotzbauer.github.io/helm-charts"
+        #   chart:
+        #     chart_version: 1.0.2
+        #     chart_ref: ckotzbauer/nfs-client-provisioner
+        #     release_namespace: nfs-client-provisioner
+        #     chart_values: {}
 
-### Configure master node
-- name: configure master node
-  become: true
-  gather_facts: false
-  hosts: all
-  vars:
-    helm_ver: 3.5.0
-  tasks:
-    - name: configure master
-      import_tasks: k8s_master/master.yml
-    - name: deploy metallb
-      import_tasks: k8s_master/metallb.yml
-    - name: deploy nfs storage
-      import_tasks: k8s_master/nfs-storage.yml
-    - name: install helm3
-      import_tasks: k8s_master/helm3.yml
-    - name: deploy nginx ingress controller
-      import_tasks: k8s_master/nginx-ingress.yml
-    # - name: deploy metrics server
-    #   import_tasks: k8s_master/metrics-server.yml
+      tags:
+      - master
+      - helm

@@ -1,9 +1,0 @@
----
-- name: configure nfs storafe
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  shell: |
-    kubectl apply -f /deploy/02_nfs_storage/ > nfs_result.log
-  args:
-    chdir: $HOME
-    creates: nfs_result.log

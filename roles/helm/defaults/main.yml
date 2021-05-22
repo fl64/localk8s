@@ -1,0 +1,4 @@
+argocd_ver: 3.6.4
+argocd_applicationset_ver: 0.1.5
+# https://bcrypt-generator.com/ --> [password]
+argocd_admin_pass: $2y$12$PAlSlC1uHzwDUSoPZWN.9.sTi/zDWXf3XrigGWBhJl5PMHlNsy8i.
