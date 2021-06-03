@@ -51,9 +51,9 @@
 - name: Fix kubelet listen ip
   copy:
     content: |
-      KUBELET_EXTRA_ARGS=--node-ip={{ ansible_enp0s8.ipv4.address }}
+      KUBELET_EXTRA_ARGS=--node-ip={{ k8s_common_kubelet_listen_ip }}
     dest: /etc/default/kubelet
-
+  when: k8s_common_kubelet_listen_ip is defined
 
 - name: Add an k8s apt key
   apt_key:
