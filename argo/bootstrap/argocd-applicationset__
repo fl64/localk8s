@@ -1,0 +1,25 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  annotations:
+    meta.helm.sh/release-name: argocd
+    meta.helm.sh/release-namespace: argocd
+    argocd.argoproj.io/sync-wave: "-10"
+  name: argocd-applicationset
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    path: ''
+    repoURL: 'https://argoproj.github.io/argo-helm'
+    targetRevision: 0.1.5
+    helm:
+      values: |
+        #installCRDs: false
+    chart: argocd-applicationset
+  syncPolicy:
+    automated:
+      selfHeal: true

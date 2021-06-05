@@ -1,0 +1,32 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: prometheus
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: prometheus
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: ""
+    chart: prometheus
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 14.1.1
+    helm:
+     values: |-
+       alertmanager:
+        persistentVolume:
+          enabled: false
+       server:
+        persistentVolume:
+          enabled: false
+  syncPolicy:
+    automated:
+      selfHeal: true
+      allowEmpty: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

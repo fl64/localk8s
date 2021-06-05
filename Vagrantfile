@@ -6,12 +6,13 @@ _k8s_worker_node_net="192.168.111"
 _k8s_bootstrap_token="2i9vqf.h8blqvijpi41qum6"
 _k8s_version="1.19.0"
 
+default_node_count=1
 master_ram=1536
 node_ram=1536
 nfs_ram=512
 
 # node count 1..10
-node_count = (ENV['K8S_NODE_COUNT'] || "1").to_i
+node_count = (ENV['K8S_NODE_COUNT'] || default_node_count).to_i
 tags = (ENV['K8S_TAGS'] || "all")
 
 Vagrant.configure("2") do |config|

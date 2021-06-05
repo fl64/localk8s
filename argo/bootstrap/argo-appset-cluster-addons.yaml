@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-addons
+  namespace: argocd
+
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/fl64/localk8s.git
+        revision: dev3
+        directories:
+          - path: argo/apps/*
+  template:
+    metadata:
+      name: "{{path.basename}}-cluster-addon"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/fl64/localk8s.git
+        targetRevision: dev3
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        #namespace: "{{path.basename}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: true
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
