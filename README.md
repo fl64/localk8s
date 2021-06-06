@@ -28,14 +28,15 @@ Once the cluster is installed and configured, Argo comes in and installs all the
 - Prometheus
 - Grafana
 - nfs-client-provisioner (storageClass: nfs-client)
+- vactor-agent
 
 ## How to
 
-``` bash
+```bash
 # up VMs and run ansible playbook
 vagrant up
 
-# run playbooks with git tag
+# run playbooks for specified ansible tags
 K8S_TAGS=common vagrant up
 
 # ssh to VMs
@@ -72,7 +73,7 @@ vagrant down
 ```
 
 ## Prep:
-(Already embedded in VM OS)
+(Already embedded in VMs)
 
 Add some completions:
 ```bash
