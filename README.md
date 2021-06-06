@@ -72,7 +72,7 @@ vagrant down
 ```
 
 ## Prep:
-(Already embedded in VM OS)
+(Already embedded in VMs)
 
 Add some completions:
 ```bash

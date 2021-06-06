@@ -1,0 +1,35 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: vector-agent
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: vector-agent
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: ""
+    chart: vector-agent
+    repoURL: https://packages.timber.io/helm/latest
+    targetRevision: 0.14.0
+    helm:
+     values: |-
+      sinks:
+        # Adjust as necessary. By default we use the console sink
+        # to print all data. This allows you to see Vector working.
+        # /docs/reference/sinks/
+        stdout:
+          type: console
+          inputs: ["kubernetes_logs"]
+          target: "stdout"
+          encoding: "json"
+  syncPolicy:
+    automated:
+      selfHeal: true
+      allowEmpty: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
