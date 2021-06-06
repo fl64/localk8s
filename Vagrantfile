@@ -7,8 +7,8 @@ _k8s_bootstrap_token="2i9vqf.h8blqvijpi41qum6"
 _k8s_version="1.19.0"
 
 default_node_count=1
-master_ram=1536
-node_ram=1536
+master_ram=1024
+node_ram=3072
 nfs_ram=512
 
 # node count 1..10
@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
       config.vm.define "node#{i}" do |node00|
           node00.vm.provider "virtualbox" do |vb|
             vb.gui = false
-            vb.memory = "#{master_ram}"
+            vb.memory = "#{node_ram}"
             vb.linked_clone = true
           end
           node00.vm.network :"private_network", ip: "#{_k8s_worker_node_net}.#{i}", :name => 'vboxnet0', :adapter => 2

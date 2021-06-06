@@ -23,6 +23,12 @@ spec:
        server:
         persistentVolume:
           enabled: false
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+          hosts:
+            - prom.k8s.local
   syncPolicy:
     automated:
       selfHeal: true

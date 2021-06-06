@@ -24,6 +24,7 @@
       - docker.io
       - nfs-client
       - tmux
+      - htop
     state: present
     update_cache: true
 

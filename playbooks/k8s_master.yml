@@ -35,6 +35,8 @@
               release_namespace: argocd
               chart_values:
                 server:
+                  extraArgs:
+                    - --insecure # <-- this thing needs to be added
                   additionalApplications:
                     - name: cluster-bootstrap
                       namespace: argocd
@@ -56,7 +58,7 @@
                           selfHeal: true
                   ingress:
                     hosts:
-                      - argocd
+                      - argo.k8s.local
                     enabled: true
                     annotations:
                       kubernetes.io/ingress.class: nginx

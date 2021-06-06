@@ -1,0 +1,45 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: grafana
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: grafana
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: ""
+    chart: grafana
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 6.11.0
+    helm:
+     values: |-
+      datasources:
+       datasources.yaml:
+         apiVersion: 1
+         datasources:
+         - name: Prometheus
+           type: prometheus
+           url: http://prometheus-server.prometheus
+           isDefault: true
+      adminPassword: password
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: "nginx"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        labels: {}
+        path: /
+        pathType: Prefix
+        hosts:
+        - grafana.k8s.local
+  syncPolicy:
+    automated:
+      selfHeal: true
+      allowEmpty: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
