@@ -9,7 +9,7 @@
         k8s_common_ver: "{{ _k8s_version }}"
         k8s_common_kubelet_listen_ip: "{{ ansible_enp0s8.ipv4.address }}"
       tags:
-      - common
+        - common
     - role: k8s_master
       vars:
         k8s_master_ver: "{{ _k8s_version }}"
@@ -19,49 +19,49 @@
         k8s_master_master_int_fqdn: "master.{{ k8s_master_master_ip_addr }}.nip.io"
         k8s_master_cluster_name: test-cluster
       tags:
-      - master
+        - master
     - role: helm
       vars:
         helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
         helm_charts:
-        # ArgoCD
-        - name: argocd
-          repo:
-            name: argo
-            repo_url: "https://argoproj.github.io/argo-helm"
-          chart:
-            chart_version: 3.6.6
-            chart_ref: argo/argo-cd
-            release_namespace: argocd
-            chart_values:
+          # ArgoCD
+          - name: argocd
+            repo:
+              name: argo
+              repo_url: "https://argoproj.github.io/argo-helm"
+            chart:
+              chart_version: 3.6.6
+              chart_ref: argo/argo-cd
+              release_namespace: argocd
+              chart_values:
                 server:
                   additionalApplications:
-                  - name: cluster-bootstrap
-                    namespace: argocd
-                    additionalLabels: {}
-                    additionalAnnotations: {}
-                    project: default
-                    source:
-                      repoURL: https://github.com/fl64/localk8s.git
-                      targetRevision: dev3
-                      path: argo/bootstrap
-                      directory:
-                        recurse: true
-                    destination:
+                    - name: cluster-bootstrap
+                      namespace: argocd
+                      additionalLabels: {}
+                      additionalAnnotations: {}
+                      project: default
+                      source:
+                        repoURL: https://github.com/fl64/localk8s.git
+                        targetRevision: dev3
+                        path: argo/bootstrap
+                        directory:
+                          recurse: true
+                      destination:
                         server: https://kubernetes.default.svc
                         namespace: default
-                    syncPolicy:
-                      automated:
-                        prune: false
-                        selfHeal: true
+                      syncPolicy:
+                        automated:
+                          prune: false
+                          selfHeal: true
                   ingress:
                     hosts:
-                    - argocd
+                      - argocd
                     enabled: true
                     annotations:
                       kubernetes.io/ingress.class: nginx
                     paths:
-                    - /
+                      - /
                   config:
                     repositories: |
                       - url: https://github.com/fl64/argocd-applicatioin-set
@@ -69,16 +69,16 @@
                   secret:
                     argocdServerAdminPassword: $2y$12$PAlSlC1uHzwDUSoPZWN.9.sTi/zDWXf3XrigGWBhJl5PMHlNsy8i.
                     argocdServerAdminPasswordMtime: "2021-06-02T15:04:05Z"
-        # ArgoCD application set
-        - name: argocd-applicationset
-          repo:
-            name: argo
-            repo_url: "https://argoproj.github.io/argo-helm"
-          chart:
-            chart_version: 0.1.5
-            chart_ref: argo/argocd-applicationset
-            release_namespace: argocd
-            chart_values:
+          # ArgoCD application set
+          - name: argocd-applicationset
+            repo:
+              name: argo
+              repo_url: "https://argoproj.github.io/argo-helm"
+            chart:
+              chart_version: 0.1.5
+              chart_ref: argo/argocd-applicationset
+              release_namespace: argocd
+              chart_values:
                 installCRDs: false
         # # Metallb
         # - name: metallb
@@ -112,27 +112,48 @@
         #         kubelet-insecure-tls:
         #         kubelet-preferred-address-types: InternalIP
         #         v: 4
-        # # Nginx ingress
-        # - name: nginx-ingress
-        #   repo:
-        #     name: nginx-stable
-        #     repo_url: "https://helm.nginx.com/stable"
-        #   chart:
-        #     chart_version: 0.9.3
-        #     chart_ref: nginx-stable/nginx-ingress
-        #     release_namespace: nginx-ingress
-        #     chart_values: {}
-        # # Nginx ingress
-        # # - name: nfs-client-provisioner
-        # #   repo:
-        # #     name: ckotzbauer
-        # #     repo_url: "https://ckotzbauer.github.io/helm-charts"
-        # #   chart:
-        # #     chart_version: 1.0.2
-        # #     chart_ref: ckotzbauer/nfs-client-provisioner
-        # #     release_namespace: nfs-client-provisioner
-        # #     chart_values: {}
 
       tags:
-      - master
-      - helm
+        - master
+        - helm
+
+# install NFS server on master node (don't do it in real env lol)
+- name: install nfs
+  become: true
+  hosts: all
+  tasks:
+    - name: install NFS srv
+      block:
+        - name: common tasks
+          apt:
+            name:
+              - nfs-kernel-server
+              - nfs-common
+              - portmap
+            state: present
+            update_cache: true
+          notify: reload nfs
+
+        - name: create nfsdir
+          file:
+            path: /var/nfs/share
+            state: directory
+            mode: 0777
+          notify: reload nfs
+
+        - name: configure nfs
+          copy:
+            content: |
+              /var/nfs/share  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+            dest: /etc/exports
+          notify: reload nfs
+
+        - name: debug
+          shell: exportfs -rv && showmount -e
+      tags:
+        - nfs
+  handlers:
+    - name: reload nfs
+      systemd:
+        name: nfs-server
+        state: restarted
