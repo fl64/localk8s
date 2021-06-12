@@ -72,10 +72,9 @@ https://prom.k8s.local
 vagrant down
 ```
 
-## Prep:
-(Already embedded in VMs)
+## Some useful stuff
 
-Add some completions:
+### Bash completions:
 ```bash
 cat <<EOF >> ~/.bashrc
 source <(kubectl completion bash)
@@ -86,8 +85,9 @@ export do="--dry-run=client -oyaml"
 EOF
 
 source ~/.bashrc
+
 ```
-Useful vim settings:
+### Vim settings:
 ```bash
 cat <<EOF >> ~/.vimrc
 set number
@@ -95,6 +95,14 @@ set et
 set sw=2 ts=2 sts=2
 EOF
 ```
+### krew plugin manager
+- install krew: https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+- plugins list: https://krew.sigs.k8s.io/plugins/
+plugins
 
-Links:
-- https://github.com/argoproj/argocd-example-apps/tree/master/helm-dependency
+```
+kubectl krew install access-matrix
+kubectl krew install view-utilization
+kubectl krew install view-webhook
+kubectl krew install example
+```

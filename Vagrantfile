@@ -7,7 +7,7 @@ _k8s_bootstrap_token="2i9vqf.h8blqvijpi41qum6"
 _k8s_version="1.19.0"
 
 default_node_count=1
-master_ram=1024
+master_ram=1536
 node_ram=3072
 nfs_ram=512
 
