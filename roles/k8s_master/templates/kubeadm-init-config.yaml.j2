@@ -1,4 +1,5 @@
 apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
 bootstrapTokens:
 - description: default kubeadm bootstrap token
   groups:
@@ -8,7 +9,6 @@ bootstrapTokens:
   usages:
   - signing
   - authentication
-kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: {{ k8s_master_master_ip_addr }}
   bindPort: 6443
@@ -19,18 +19,18 @@ nodeRegistration:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
 ---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
 apiServer:
   certSANs:
   - {{ k8s_master_master_ip_addr }}
   - {{ k8s_master_master_int_fqdn }}
-  - {{ k8s_master_master_ext_fqdn }}
   extraArgs:
     default-watch-cache-size: "500"
     max-mutating-requests-inflight: "500"
     max-requests-inflight: "1000"
     watch-cache-sizes: persistentvolumeclaims#1000,persistentvolumes#1000
   timeoutForControlPlane: 4m0s
-apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
 clusterName: {{ k8s_master_cluster_name }}
 controlPlaneEndpoint: {{ k8s_master_master_int_fqdn }}:6443
@@ -43,7 +43,6 @@ etcd:
   local:
     dataDir: /var/lib/etcd
 imageRepository: k8s.gcr.io
-kind: ClusterConfiguration
 kubernetesVersion: v{{ k8s_master_ver }}
 networking:
   dnsDomain: cluster.local

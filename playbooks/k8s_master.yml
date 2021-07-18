@@ -15,7 +15,6 @@
         k8s_master_ver: "{{ _k8s_version }}"
         k8s_master_bootstrap_token: "{{ _k8s_bootstrap_token }}"
         k8s_master_master_ip_addr: "{{ _k8s_master_node_ip }}"
-        k8s_master_master_ext_fqdn: "master-ext.{{ k8s_master_master_ip_addr }}.nip.io"
         k8s_master_master_int_fqdn: "master.{{ k8s_master_master_ip_addr }}.nip.io"
         k8s_master_cluster_name: test-cluster
       tags:

@@ -16,6 +16,14 @@ Once the cluster is installed and configured, Argo comes in and installs all the
 ## Requirements:
 - virtualbox (tested on 6.1.12)
 - vagrant (tested on 2.2.14)
+- ansible (tested on 4.2.0)
+
+```bash
+ansible-galaxy collection install community.general
+ansible-galaxy collection install ansible.posix
+ansible-galaxy collection install community.kubernetes
+```
+
 ## Recommendations
 - envrc
 - k9s
