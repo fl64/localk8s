@@ -20,6 +20,10 @@ spec:
        alertmanager:
         persistentVolume:
           enabled: false
+       nodeExporter:
+        tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
        server:
         persistentVolume:
           enabled: false
