@@ -1,8 +1,32 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: test-apps
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - server: https://kubernetes.default.svc
+    namespace: 'test-apps-*'
+  # - server: https://kubernetes.default.svc
+  #   namespace: test
+  # - server: https://kubernetes.default.svc
+  #   namespace: pod-sequence
+  orphanedResources:
+    warn: true
+  sourceRepos:
+  - '*'
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: test-apps
   namespace: argocd
+  annotations:
+      argocd.argoproj.io/sync-wave: "1"
 spec:
   generators:
     - git:
@@ -12,20 +36,21 @@ spec:
           - path: apps/*
   template:
     metadata:
-      name: "{{path.basename}}"
+      name: "test-apps-{{path.basename}}"
     spec:
-      project: default
+      project: test-apps
       source:
         repoURL: https://github.com/fl64/argocd-applicatioin-set
         targetRevision: HEAD
         path: "{{path}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{path.basename}}"
+        namespace: "test-apps-{{path.basename}}"
       syncPolicy:
         automated:
           prune: true
           allowEmpty: true
+          selfHeal: true
         syncOptions:
           - Validate=true
           - CreateNamespace=true

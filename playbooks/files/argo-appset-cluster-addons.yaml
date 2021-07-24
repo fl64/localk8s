@@ -13,6 +13,8 @@ spec:
   template:
     metadata:
       name: '{{path.basename}}'
+      labels:
+        cluster-addon: "true"
     spec:
       project: default
       source:
