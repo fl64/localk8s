@@ -2,6 +2,8 @@ k8s lab with gitops via ArgoCD
 ==============================
 k8s cluster (1 master + X nodes )
 
+k8s ver 1.21.0
+
 ## Info
 
 This lab is designed for local testing different k8s features and deployment with ArgoCD.
