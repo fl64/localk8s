@@ -23,16 +23,18 @@
       vars:
         helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
         helm_charts:
-          # Cilium
-          - name: cilium
-            repo:
-              name: cilium
-              repo_url: "https://helm.cilium.io/"
-            chart:
-              chart_version: 1.10.3
-              chart_ref: cilium/cilium
-              release_namespace: kube-system
-              chart_values: {}
+          # # Cilium
+          # - name: cilium
+          #   repo:
+          #     name: cilium
+          #     repo_url: "https://helm.cilium.io/"
+          #   chart:
+          #     chart_version: 1.10.3
+          #     chart_ref: cilium/cilium
+          #     release_namespace: kube-system
+          #     chart_values:
+          #       debug:
+          #         enabled: true
           # ArgoCD
           - name: argocd
             repo:
