@@ -6,7 +6,7 @@
   roles:
     - role: k8s_common
       vars:
-        k8s_common_ver: "{{ _k8s_version }}"
+        k8s_common_k8s_ver: "{{ _k8s_version }}"
         k8s_common_kubelet_listen_ip: "{{ ansible_enp0s8.ipv4.address }}"
       tags:
         - common

@@ -1,2 +1,2 @@
-k8s_ver: 1.19.0
-cni_ver: 0.8.7
+k8s_common_k8s_ver: 1.19.0
+k8s_common_cni_ver: 0.8.7

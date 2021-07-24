@@ -70,10 +70,10 @@
 - name: install k8s components
   apt:
     name:
-      - "kubeadm={{ k8s_ver }}-00"
-      - "kubelet={{ k8s_ver }}-00"
-      - "kubectl={{ k8s_ver }}-00"
-      - "kubernetes-cni={{ cni_ver }}-00"
+      - "kubeadm={{ k8s_common_k8s_ver }}-00"
+      - "kubelet={{ k8s_common_k8s_ver }}-00"
+      - "kubectl={{ k8s_common_k8s_ver }}-00"
+      - "kubernetes-cni={{ k8s_common_cni_ver }}-00"
     state: present
 
 - name: create .vimrc
