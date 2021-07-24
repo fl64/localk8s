@@ -1,8 +1,10 @@
-k8s lab with gitops via ArgoCD
-==============================
+# k8s lab with gitops via ArgoCD
+
 k8s cluster (1 master + X nodes )
 
-k8s ver 1.21.0
+- k8s ver 1.21.0
+- master - 2Gb Ram
+- worker - 3Gb Ram
 
 ## Info
 
@@ -16,6 +18,7 @@ Once the cluster is installed and configured, Argo comes in and installs all the
 ![localk8s](https://raw.githubusercontent.com/fl64/localk8s/dev3/scheme/localk8s.png)
 
 ## Requirements:
+
 - virtualbox (tested on 6.1.12)
 - vagrant (tested on 2.2.14)
 - ansible (tested on 4.2.0)
@@ -27,8 +30,10 @@ ansible-galaxy collection install community.kubernetes
 ```
 
 ## Recommendations
+
 - envrc
 - k9s
+
 ## Current setup
 
 - k8s
@@ -85,6 +90,7 @@ vagrant down
 ## Some useful stuff
 
 ### Bash completions:
+
 ```bash
 cat <<EOF >> ~/.bashrc
 source <(kubectl completion bash)
@@ -97,7 +103,9 @@ EOF
 source ~/.bashrc
 
 ```
+
 ### Vim settings:
+
 ```bash
 cat <<EOF >> ~/.vimrc
 set number
@@ -105,10 +113,12 @@ set et
 set sw=2 ts=2 sts=2
 EOF
 ```
+
 ### krew plugin manager
+
 - install krew: https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 - plugins list: https://krew.sigs.k8s.io/plugins/
-plugins
+  plugins
 
 ```
 kubectl krew install access-matrix
@@ -116,3 +126,16 @@ kubectl krew install view-utilization
 kubectl krew install view-webhook
 kubectl krew install example
 ```
+
+# Links:
+
+- cilium: https://docs.cilium.io/en/stable/gettingstarted/k8s-install-helm/#installation-using-helm
+- Awesome Kubernetes Resources: https://github.com/tomhuang12/awesome-k8s-resources
+- kubernetes-homelab: https://github.com/lisenet/kubernetes-homelab
+# ToDo:
+
+- [ ] refactor roles
+- [ ] use helm template instead of helm in ansible
+- [ ] generate k8s certs with cfssl
+- [ ] fix cert fqdns and IPs
+- [ ] multiply masters?

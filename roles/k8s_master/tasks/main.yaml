@@ -61,6 +61,7 @@
   args:
     chdir: "{{ k8s_master_temp_dir }}/"
     creates: calico.log
+  when: k8s_master_calico
 
 - name: Find out kubeconf
   ansible.builtin.slurp:

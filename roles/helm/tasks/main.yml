@@ -34,7 +34,9 @@
     repo_url: "{{ item.repo.repo_url }}"
   with_items: "{{ helm_charts }}"
 
-- debug: msg="{{ item.chart.chart_values }}"
+- name: debug
+  debug:
+    var: "{{item.chart}}"
   with_items: "{{ helm_charts }}"
 
 - name: Deploy helm chart
