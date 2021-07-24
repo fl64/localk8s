@@ -29,7 +29,7 @@
               name: argo
               repo_url: "https://argoproj.github.io/argo-helm"
             chart:
-              chart_version: 3.6.6
+              chart_version: 3.10.0
               chart_ref: argo/argo-cd
               release_namespace: argocd
               chart_values:
