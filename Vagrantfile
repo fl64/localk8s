@@ -3,11 +3,11 @@
 
 _k8s_master_node_ip="192.168.111.10"
 _k8s_worker_node_net="192.168.111"
-_k8s_bootstrap_token="2i9vqf.h8blqvijpi41qum6"
-_k8s_version="1.19.0"
+_k8s_bootstrap_token="2i9vqf.h8blqvijpi41qum6" # or kubeadm token generate
+_k8s_version="1.21.0"
 
 default_node_count=1
-master_ram=1536
+master_ram=2048
 node_ram=3072
 nfs_ram=512
 
