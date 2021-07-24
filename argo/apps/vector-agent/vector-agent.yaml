@@ -14,7 +14,7 @@ spec:
     path: ""
     chart: vector-agent
     repoURL: https://packages.timber.io/helm/latest
-    targetRevision: 0.14.0
+    targetRevision: 0.15.0
     helm:
      values: |-
       sinks:

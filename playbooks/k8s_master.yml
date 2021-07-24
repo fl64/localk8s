@@ -77,7 +77,7 @@
               name: argo
               repo_url: "https://argoproj.github.io/argo-helm"
             chart:
-              chart_version: 0.1.5
+              chart_version: 1.0.0
               chart_ref: argo/argocd-applicationset
               release_namespace: argocd
               chart_values:
