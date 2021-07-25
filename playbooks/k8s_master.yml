@@ -23,23 +23,26 @@
       vars:
         helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
         helm_charts:
-          # Cilium
-          # - name: cilium
-          #   repo:
-          #     name: cilium
-          #     repo_url: "https://helm.cilium.io/"
-          #   chart:
-          #     chart_version: 1.10.3
-          #     chart_ref: cilium/cilium
-          #     release_namespace: kube-system
-          #     chart_values:
-          #       debug:
-          #         enabled: true
-          #       hubble:
-          #         relay:
-          #           enabled: true
-          #         ui:
-          #           enabled: true
+          # #Cilium
+          - name: cilium
+            repo:
+              name: cilium
+              repo_url: "https://helm.cilium.io/"
+            chart:
+              chart_version: 1.10.3
+              chart_ref: cilium/cilium
+              release_namespace: kube-system
+              chart_values:
+                ipam:
+                  operator:
+                    clusterPoolIPv4PodCIDR: "10.99.0.0/16" # fix issue with vbox 10.0.2.X network
+                debug:
+                  enabled: true
+                hubble:
+                  relay:
+                    enabled: true
+                  ui:
+                    enabled: true
           # ArgoCD
           - name: argocd
             repo:

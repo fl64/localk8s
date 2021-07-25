@@ -2,9 +2,8 @@ k8s_master_ver: 1.19.0
 k8s_master_bootstrap_token: testbootstraptoken
 k8s_master_master_ip_addr: "{{ansible_default_ipv4.address|default(ansible_all_ipv4_addresses[0])}}"
 k8s_master_master_int_fqdn: "master.{{ k8s_master_master_ip_addr }}.nip.io"
-k8s_master_cluster_name: test-cluster
+k8s_master_cluster_name: default
 ks8_master_pod_subnet:  10.244.0.0/16
 ks8_master_service_subnet: 10.96.0.0/12
 k8s_master_temp_dir: /build
-k8s_master_calico: true
-k8s_master_cillium: false
+k8s_master_calico: false
