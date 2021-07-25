@@ -134,6 +134,7 @@ kubectl krew install example
 - kubernetes-homelab: https://github.com/lisenet/kubernetes-homelab
 # ToDo:
 
+- [x] move to containerd
 - [ ] refactor roles
 - [ ] use helm template instead of helm in ansible
 - [ ] generate k8s certs with cfssl

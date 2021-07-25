@@ -8,6 +8,6 @@ discovery:
   tlsBootstrapToken: {{k8s_worker_bootstrap_token}}
 kind: JoinConfiguration
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
+  criSocket: /run/containerd/containerd.sock #/var/run/dockershim.sock
   #name: master
   taints: null

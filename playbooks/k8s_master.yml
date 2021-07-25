@@ -23,7 +23,7 @@
       vars:
         helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
         helm_charts:
-          # # Cilium
+          # Cilium
           # - name: cilium
           #   repo:
           #     name: cilium
@@ -35,6 +35,11 @@
           #     chart_values:
           #       debug:
           #         enabled: true
+          #       hubble:
+          #         relay:
+          #           enabled: true
+          #         ui:
+          #           enabled: true
           # ArgoCD
           - name: argocd
             repo:

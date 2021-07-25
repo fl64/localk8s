@@ -1,4 +1,17 @@
 ---
+- name: Disable SWAP
+  shell:
+    cmd: |
+      swapoff -a
+  args:
+    executable: /bin/bash
+
+- name: Remove Swap from fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
 - name: enable modules
   community.general.modprobe:
     name: "{{ item }}"
@@ -13,40 +26,73 @@
     sysctl_set: yes
     state: present
     reload: yes
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
   with_items:
     - { name: net.bridge.bridge-nf-call-iptables, value: 1 }
     - { name: net.ipv4.ip_forward, value: 1 }
     - { name: net.bridge.bridge-nf-call-ip6tables, value: 1 }
 
-- name: install docker
+- name: docker.io / contianerd repo
+  block:
+    - name: Add an Apt signing key to a specific keyring file
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add specified repository into sources list
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+        filename: docker
+        state: present
+
+- name: install containerd and other packages
   apt:
     name:
-      - docker.io
+      - containerd.io
       - nfs-client
       - tmux
       - htop
     state: present
     update_cache: true
 
-- name: create docker config
-  copy:
-    content: |
-      {
-        "exec-opts": ["native.cgroupdriver=systemd"],
-        "log-driver": "json-file",
-        "log-opts": {
-          "max-size": "100m"
-        },
-        "storage-driver": "overlay2"
-      }
-    dest: /etc/docker/daemon.json
+# - name: create docker config
+#   copy:
+#     content: |
+#       {
+#         "exec-opts": ["native.cgroupdriver=systemd"],
+#         "log-driver": "json-file",
+#         "log-opts": {
+#           "max-size": "100m"
+#         },
+#         "storage-driver": "overlay2"
+#       }
+#     dest: /etc/docker/daemon.json
 
-- name: enable docker
+- name: copy containerd config
+  copy:
+    src: containerd/config.toml
+    dest: /etc/containerd/
+    mode: "0644"
+
+- name: enable containerd
   systemd:
-    name: docker
+    name: containerd
     state: restarted
     daemon_reload: true
     enabled: true
+
+- name: install crictl
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ k8s_common_crictl_ver }}/crictl-{{ k8s_common_crictl_ver }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: 0755
+
+- name: copy crictl config
+  copy:
+    src: crictl/crictl.yaml
+    dest: /etc/
+    mode: "0644"
 
 # https://stackoverflow.com/questions/59629319/unable-to-upgrade-connection-pod-does-not-exist
 - name: Fix kubelet listen ip

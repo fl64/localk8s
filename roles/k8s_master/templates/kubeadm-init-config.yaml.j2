@@ -13,7 +13,7 @@ localAPIEndpoint:
   advertiseAddress: {{ k8s_master_master_ip_addr }}
   bindPort: 6443
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
+  criSocket: /run/containerd/containerd.sock #/var/run/dockershim.sock
   name: master
   taints:
   - effect: NoSchedule
