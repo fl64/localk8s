@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 discovery:
   bootstrapToken:
-    apiServerEndpoint: {{ k8s_worker_master_fqdn }}:6443
+    apiServerEndpoint: {{ k8s_worker_master_addr }}:6443
     token: {{k8s_worker_bootstrap_token}}
     unsafeSkipCAVerification: true
   timeout: 5m0s
