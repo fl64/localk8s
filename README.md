@@ -2,9 +2,11 @@
 
 k8s cluster (1 master + X nodes )
 
+Current config:
 - k8s ver 1.21.0
 - master - 2Gb Ram
 - worker - 3Gb Ram
+- network: cilium
 
 ## Info
 
@@ -20,7 +22,7 @@ Once the cluster is installed and configured, Argo comes in and installs all the
 ## Requirements:
 
 - virtualbox (tested on 6.1.12)
-- vagrant (tested on 2.2.14)
+- vagrant (tested on 2.2.16)
 - ansible (tested on 4.2.0)
 
 ```bash
@@ -112,6 +114,13 @@ set number
 set et
 set sw=2 ts=2 sts=2
 EOF
+```
+
+### Tshoot traffic issues with hubble
+
+```bash
+k port-forward service/hubble-relay -n kube-system 4245:80 &
+hubble observe --verdict DROPPED -f
 ```
 
 ### krew plugin manager
