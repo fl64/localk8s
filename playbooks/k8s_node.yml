@@ -11,6 +11,6 @@
     - role: k8s_worker
       vars:
         k8s_worker_bootstrap_token: "{{ _k8s_bootstrap_token }}"
-        k8s_worker_master_fqdn: "{{ _k8s_master_node_ip }}"
+        k8s_worker_master_addr: "{{ _k8s_master_node_ip }}"
       tags:
       - worker
