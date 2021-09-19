@@ -1,0 +1,26 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: falco
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: falco
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: ""
+    chart: falco
+    repoURL: https://falcosecurity.github.io/charts
+    targetRevision: 1.15.7
+    helm:
+     values: ""
+  syncPolicy:
+    automated:
+      selfHeal: true
+      allowEmpty: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
