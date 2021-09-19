@@ -17,6 +17,7 @@
         k8s_master_master_ip_addr: "{{ _k8s_master_node_ip }}"
         k8s_master_master_int_fqdn: "master.{{ k8s_master_master_ip_addr }}.nip.io"
         k8s_master_cluster_name: test-cluster
+        k8s_master_calico: true
       tags:
         - master
     - role: helm
@@ -24,25 +25,25 @@
         helm_kubeapi_ip_addr: "{{ _k8s_master_node_ip }}"
         helm_charts:
           # #Cilium
-          - name: cilium
-            repo:
-              name: cilium
-              repo_url: "https://helm.cilium.io/"
-            chart:
-              chart_version: 1.10.3
-              chart_ref: cilium/cilium
-              release_namespace: kube-system
-              chart_values:
-                ipam:
-                  operator:
-                    clusterPoolIPv4PodCIDR: "10.99.0.0/16" # fix issue with vbox 10.0.2.X network
-                debug:
-                  enabled: true
-                hubble:
-                  relay:
-                    enabled: true
-                  ui:
-                    enabled: true
+          # - name: cilium
+          #   repo:
+          #     name: cilium
+          #     repo_url: "https://helm.cilium.io/"
+          #   chart:
+          #     chart_version: 1.10.3
+          #     chart_ref: cilium/cilium
+          #     release_namespace: kube-system
+          #     chart_values:
+          #       ipam:
+          #         operator:
+          #           clusterPoolIPv4PodCIDR: "10.99.0.0/16" # fix issue with vbox 10.0.2.X network
+          #       debug:
+          #         enabled: true
+          #       hubble:
+          #         relay:
+          #           enabled: true
+          #         ui:
+          #           enabled: true
           # ArgoCD
           - name: argocd
             repo:
@@ -59,7 +60,8 @@
                   additionalApplications:
                     - name: cluster-bootstrap
                       namespace: argocd
-                      additionalLabels: {}
+                      additionalLabels:
+                        argo-app: bootstrap
                       additionalAnnotations: {}
                       project: default
                       source:
