@@ -14,7 +14,7 @@ spec:
     path: ""
     chart: ingress-nginx
     repoURL: https://kubernetes.github.io/ingress-nginx
-    targetRevision: 3.34.0
+    targetRevision: 4.0.3
     # helm:
     #  values: |-
 
